@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, Plus, Coins, RefreshCw } from 'lucide-react';
 
+// Note: In production, these should be moved to environment variables (e.g., REACT_APP_SUPABASE_URL)
+// The anon key below is designed to be public and safe for client-side use with proper RLS policies
 const SUPABASE_URL = 'https://xhgozdhqfmxeufebbrmt.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoZ296ZGhxZm14ZXVmZWJicm10Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyNjQ1MDYsImV4cCI6MjA3OTg0MDUwNn0.4_RFFgCHjSquyjO4Hf3NKfjt288rN0WMZ_STobQME10';
 
