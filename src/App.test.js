@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders prediction market component', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  // The component shows a loading state initially
+  const loadingElement = screen.getByText(/Loading markets.../i);
+  expect(loadingElement).toBeInTheDocument();
 });
