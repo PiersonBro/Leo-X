@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, TrendingDown, Plus, Coins, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Plus, Coins, RefreshCw, Sparkles, Trophy, Clock, Activity } from 'lucide-react';
 
 // Note: In production, these should be moved to environment variables (e.g., REACT_APP_SUPABASE_URL)
 // The anon key below is designed to be public and safe for client-side use with proper RLS policies
@@ -274,12 +274,228 @@ const PredictionMarket = () => {
     }
   };
 
+  // Inline styles for beautiful UI
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%)',
+      padding: '2rem',
+      position: 'relative',
+      overflow: 'hidden',
+    },
+    backgroundOrb1: {
+      position: 'fixed',
+      top: '10%',
+      left: '20%',
+      width: '400px',
+      height: '400px',
+      background: 'rgba(168, 85, 247, 0.2)',
+      borderRadius: '50%',
+      filter: 'blur(80px)',
+      animation: 'float 8s ease-in-out infinite',
+      pointerEvents: 'none',
+    },
+    backgroundOrb2: {
+      position: 'fixed',
+      bottom: '20%',
+      right: '20%',
+      width: '300px',
+      height: '300px',
+      background: 'rgba(236, 72, 153, 0.2)',
+      borderRadius: '50%',
+      filter: 'blur(80px)',
+      animation: 'float 8s ease-in-out infinite',
+      animationDelay: '4s',
+      pointerEvents: 'none',
+    },
+    glassCard: {
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      background: 'rgba(255, 255, 255, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      borderRadius: '24px',
+      boxShadow: '0 0 40px rgba(168, 85, 247, 0.3)',
+      padding: '1.5rem',
+      marginBottom: '1.5rem',
+      transition: 'all 0.3s ease',
+    },
+    title: {
+      fontSize: '1.875rem',
+      fontWeight: '700',
+      background: 'linear-gradient(135deg, #fff 0%, #e9d5ff 50%, #fbcfe8 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+    },
+    subtitle: {
+      color: 'rgba(196, 181, 253, 0.8)',
+      marginLeft: '3.5rem',
+    },
+    userInfo: {
+      backdropFilter: 'blur(10px)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      padding: '1rem 1.25rem',
+      borderRadius: '16px',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      textAlign: 'right',
+    },
+    coinIcon: {
+      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+      padding: '0.25rem',
+      borderRadius: '8px',
+      display: 'inline-flex',
+    },
+    balanceAmount: {
+      fontWeight: '700',
+      fontSize: '1.125rem',
+      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+    },
+    btnPrimary: {
+      background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+      color: 'white',
+      padding: '0.75rem 1.5rem',
+      borderRadius: '12px',
+      fontWeight: '600',
+      border: 'none',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      boxShadow: '0 10px 30px rgba(168, 85, 247, 0.3)',
+      transition: 'all 0.3s ease',
+    },
+    btnSecondary: {
+      background: 'rgba(255, 255, 255, 0.1)',
+      color: 'white',
+      padding: '0.75rem',
+      borderRadius: '12px',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+    },
+    yesCard: {
+      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)',
+      border: '1px solid rgba(16, 185, 129, 0.3)',
+      borderRadius: '16px',
+      padding: '1rem',
+      transition: 'all 0.3s ease',
+    },
+    noCard: {
+      background: 'linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%)',
+      border: '1px solid rgba(244, 63, 94, 0.3)',
+      borderRadius: '16px',
+      padding: '1rem',
+      transition: 'all 0.3s ease',
+    },
+    betBtnYes: {
+      flex: 1,
+      background: 'rgba(16, 185, 129, 0.3)',
+      color: '#a7f3d0',
+      border: '1px solid rgba(16, 185, 129, 0.3)',
+      padding: '0.5rem',
+      borderRadius: '12px',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+    },
+    betBtnNo: {
+      flex: 1,
+      background: 'rgba(244, 63, 94, 0.3)',
+      color: '#fecdd3',
+      border: '1px solid rgba(244, 63, 94, 0.3)',
+      padding: '0.5rem',
+      borderRadius: '12px',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+    },
+    betInput: {
+      flex: 1,
+      padding: '0.5rem 0.75rem',
+      background: 'rgba(255, 255, 255, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      borderRadius: '12px',
+      color: 'white',
+      fontSize: '0.875rem',
+    },
+    betSubmitYes: {
+      padding: '0.5rem 1rem',
+      background: 'linear-gradient(135deg, #10b981 0%, #22c55e 100%)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '12px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      boxShadow: '0 5px 20px rgba(16, 185, 129, 0.3)',
+    },
+    betSubmitNo: {
+      padding: '0.5rem 1rem',
+      background: 'linear-gradient(135deg, #f43f5e 0%, #ef4444 100%)',
+      color: 'white',
+      border: 'none',
+      borderRadius: '12px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      boxShadow: '0 5px 20px rgba(244, 63, 94, 0.3)',
+    },
+    activityItem: {
+      background: 'rgba(255, 255, 255, 0.05)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      borderRadius: '12px',
+      padding: '0.75rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '0.5rem',
+    },
+    positionCard: {
+      background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%)',
+      border: '1px solid rgba(168, 85, 247, 0.3)',
+      borderRadius: '16px',
+      padding: '1rem',
+      marginBottom: '1rem',
+    },
+    resolveBtn: {
+      flex: 1,
+      padding: '0.75rem',
+      borderRadius: '12px',
+      fontWeight: '600',
+      border: 'none',
+      cursor: 'pointer',
+      color: 'white',
+    },
+    inputField: {
+      width: '100%',
+      padding: '0.75rem 1rem',
+      background: 'rgba(255, 255, 255, 0.1)',
+      border: '2px solid rgba(255, 255, 255, 0.2)',
+      borderRadius: '12px',
+      color: 'white',
+      marginBottom: '1rem',
+      fontSize: '1rem',
+      boxSizing: 'border-box',
+    },
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="w-12 h-12 text-purple-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-semibold">Loading markets...</p>
+      <div className="loading-container">
+        <div style={{ textAlign: 'center' }}>
+          <div className="loading-spinner">
+            <div className="loading-glow"></div>
+            <RefreshCw style={{ width: '64px', height: '64px', color: '#a855f7', animation: 'spin 1s linear infinite', position: 'relative', zIndex: 10, margin: '0 auto 1.5rem' }} />
+          </div>
+          <p style={{ color: '#e9d5ff', fontWeight: '600', fontSize: '1.125rem', letterSpacing: '0.025em' }}>Loading markets...</p>
+          <div className="loading-dots">
+            <span className="loading-dot"></span>
+            <span className="loading-dot"></span>
+            <span className="loading-dot"></span>
+          </div>
         </div>
       </div>
     );
@@ -287,23 +503,23 @@ const PredictionMarket = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Connection Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <div className="text-left bg-gray-50 rounded p-4 text-sm">
-            <p className="font-semibold mb-2">Troubleshooting:</p>
-            <ol className="list-decimal list-inside space-y-1 text-gray-700">
-              <li>Check that your Supabase project is running</li>
-              <li>Verify the API URL and key are correct</li>
-              <li>Ensure the tables exist: users, markets, bids</li>
+      <div className="prediction-market" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ ...styles.glassCard, maxWidth: '28rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '3.75rem', marginBottom: '1.5rem' }}>⚠️</div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'white', marginBottom: '0.75rem' }}>Connection Error</h2>
+          <p style={{ color: '#e9d5ff', marginBottom: '1.5rem' }}>{error}</p>
+          <div style={{ textAlign: 'left', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', padding: '1rem', border: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1.5rem' }}>
+            <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#d8b4fe' }}>Troubleshooting:</p>
+            <ol style={{ listStyleType: 'decimal', paddingLeft: '1.5rem', color: '#e9d5ff' }}>
+              <li style={{ marginBottom: '0.5rem' }}>Check that your Supabase project is running</li>
+              <li style={{ marginBottom: '0.5rem' }}>Verify the API URL and key are correct</li>
+              <li style={{ marginBottom: '0.5rem' }}>Ensure the tables exist: users, markets, bids</li>
               <li>Check that RLS policies allow anonymous access</li>
             </ol>
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600"
+            style={styles.btnPrimary}
           >
             Retry
           </button>
@@ -314,44 +530,56 @@ const PredictionMarket = () => {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 font-semibold">Error loading user. Please refresh the page.</p>
+      <div className="prediction-market" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ ...styles.glassCard, textAlign: 'center' }}>
+          <p style={{ color: '#e9d5ff', fontWeight: '600', fontSize: '1.125rem' }}>Error loading user. Please refresh the page.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="prediction-market">
+      {/* Animated background orbs */}
+      <div style={styles.backgroundOrb1}></div>
+      <div style={styles.backgroundOrb2}></div>
+      
+      <div style={{ maxWidth: '72rem', margin: '0 auto', position: 'relative', zIndex: 10 }}>
+        {/* Header Card */}
+        <div className="glass-card" style={styles.glassCard}>
+          <div className="market-header">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">🎯 Family Prediction Market</h1>
-              <p className="text-gray-600">Make predictions with play money!</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                <div style={{ padding: '0.5rem', background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', borderRadius: '12px', boxShadow: '0 10px 30px rgba(168, 85, 247, 0.3)' }}>
+                  <Sparkles style={{ width: '24px', height: '24px', color: 'white' }} />
+                </div>
+                <h1 style={styles.title}>Family Prediction Market</h1>
+              </div>
+              <p style={styles.subtitle}>Make predictions with play money!</p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-600">Playing as</p>
-                <p className="font-semibold text-gray-800">{currentUser.name}</p>
-                <div className="flex items-center justify-end gap-1 text-purple-600 font-bold">
-                  <Coins className="w-4 h-4" />
-                  <span>{currentUser.balance}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={styles.userInfo}>
+                <p style={{ fontSize: '0.75rem', color: 'rgba(196, 181, 253, 0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Playing as</p>
+                <p style={{ fontWeight: '600', color: 'white' }}>{currentUser.name}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.25rem' }}>
+                  <span style={styles.coinIcon}>
+                    <Coins style={{ width: '16px', height: '16px', color: 'white' }} />
+                  </span>
+                  <span style={styles.balanceAmount}>{currentUser.balance}</span>
                 </div>
               </div>
               <button
                 onClick={loadMarkets}
-                className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
+                style={styles.btnSecondary}
                 title="Refresh"
               >
-                <RefreshCw className="w-5 h-5 text-gray-600" />
+                <RefreshCw style={{ width: '20px', height: '20px', color: '#d8b4fe' }} />
               </button>
               <button
                 onClick={() => setShowCreateMarket(!showCreateMarket)}
-                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transition-all flex items-center gap-2"
+                style={styles.btnPrimary}
               >
-                <Plus className="w-5 h-5" />
+                <Plus style={{ width: '20px', height: '20px' }} />
                 New Market
               </button>
             </div>
@@ -359,31 +587,34 @@ const PredictionMarket = () => {
         </div>
 
         {showCreateMarket && (
-          <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Create New Prediction</h2>
+          <div className="glass-card" style={styles.glassCard}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: 'white', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sparkles style={{ width: '20px', height: '20px', color: '#a855f7' }} />
+              Create New Prediction
+            </h2>
             <input
               type="text"
               placeholder="What will happen? (e.g., Will it snow on Christmas?)"
               value={newMarket.question}
               onChange={(e) => setNewMarket({ ...newMarket, question: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg mb-4 focus:border-purple-500 focus:outline-none"
+              style={styles.inputField}
             />
             <input
               type="date"
               value={newMarket.endDate}
               onChange={(e) => setNewMarket({ ...newMarket, endDate: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg mb-4 focus:border-purple-500 focus:outline-none"
+              style={styles.inputField}
             />
-            <div className="flex gap-3">
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
               <button
                 onClick={createMarket}
-                className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transition-all"
+                style={{ ...styles.btnPrimary, flex: 1, justifyContent: 'center' }}
               >
                 Create Market
               </button>
               <button
                 onClick={() => setShowCreateMarket(false)}
-                className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                style={{ padding: '0.75rem 1.5rem', border: '2px solid rgba(255, 255, 255, 0.2)', borderRadius: '12px', fontWeight: '600', color: 'white', background: 'transparent', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -391,12 +622,15 @@ const PredictionMarket = () => {
           </div>
         )}
 
-        <div className="grid gap-6">
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
           {markets.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-              <TrendingUp className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No markets yet!</h3>
-              <p className="text-gray-500">Create your first prediction to get started</p>
+            <div className="glass-card" style={{ ...styles.glassCard, padding: '3rem', textAlign: 'center' }}>
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', borderRadius: '50%', filter: 'blur(30px)', opacity: 0.2 }}></div>
+                <TrendingUp style={{ width: '80px', height: '80px', color: 'rgba(168, 85, 247, 0.5)', margin: '0 auto 1.5rem', position: 'relative', zIndex: 10 }} />
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '600', color: 'white', marginBottom: '0.5rem' }}>No markets yet!</h3>
+              <p style={{ color: 'rgba(196, 181, 253, 0.7)' }}>Create your first prediction to get started</p>
             </div>
           ) : (
             markets.map(market => {
@@ -404,170 +638,179 @@ const PredictionMarket = () => {
               const noPrice = 100 - yesPrice;
 
               return (
-                <div key={market.id} className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-bold text-gray-800 flex-1">{market.question}</h3>
-                      {market.resolved && (
-                        <span className="ml-4 px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                          Resolved: {market.outcome === 'yes' ? 'YES' : 'NO'}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mb-4">Ends: {new Date(market.end_date).toLocaleDateString()}</p>
-
-                    <div className="grid md:grid-cols-2 gap-4 mb-6">
-                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200">
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="font-bold text-green-800">YES</span>
-                          <div className="flex items-center gap-1">
-                            <TrendingUp className="w-4 h-4 text-green-600" />
-                            <span className="text-2xl font-bold text-green-800">{yesPrice}%</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-green-700 mb-3">
-                          Pool: {Math.round(market.yes_shares)} shares
-                        </div>
-                        {!market.resolved && (
-                          <>
-                            <div className="flex gap-2 mb-2">
-                              {[10, 25, 50, 100].map(amount => (
-                                <button
-                                  key={amount}
-                                  onClick={() => placeBid(market.id, 'yes', amount)}
-                                  className="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-all"
-                                >
-                                  {amount}
-                                </button>
-                              ))}
-                            </div>
-                            <div className="flex gap-2">
-                              <input
-                                type="number"
-                                placeholder="Custom"
-                                value={customBets[market.id] || ''}
-                                onChange={(e) => setCustomBets({ ...customBets, [market.id]: e.target.value })}
-                                className="flex-1 px-3 py-2 border-2 border-green-300 rounded-lg text-sm focus:border-green-500 focus:outline-none"
-                              />
-                              <button
-                                onClick={() => placeBid(market.id, 'yes', parseInt(customBets[market.id]) || 0)}
-                                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-all"
-                              >
-                                Bet
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-
-                      <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 border-2 border-red-200">
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="font-bold text-red-800">NO</span>
-                          <div className="flex items-center gap-1">
-                            <TrendingDown className="w-4 h-4 text-red-600" />
-                            <span className="text-2xl font-bold text-red-800">{noPrice}%</span>
-                          </div>
-                        </div>
-                        <div className="text-xs text-red-700 mb-3">
-                          Pool: {Math.round(market.no_shares)} shares
-                        </div>
-                        {!market.resolved && (
-                          <>
-                            <div className="flex gap-2 mb-2">
-                              {[10, 25, 50, 100].map(amount => (
-                                <button
-                                  key={amount}
-                                  onClick={() => placeBid(market.id, 'no', amount)}
-                                  className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition-all"
-                                >
-                                  {amount}
-                                </button>
-                              ))}
-                            </div>
-                            <div className="flex gap-2">
-                              <input
-                                type="number"
-                                placeholder="Custom"
-                                value={customBets[market.id] || ''}
-                                onChange={(e) => setCustomBets({ ...customBets, [market.id]: e.target.value })}
-                                className="flex-1 px-3 py-2 border-2 border-red-300 rounded-lg text-sm focus:border-red-500 focus:outline-none"
-                              />
-                              <button
-                                onClick={() => placeBid(market.id, 'no', parseInt(customBets[market.id]) || 0)}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-all"
-                              >
-                                Bet
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {market.bids.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="font-semibold text-gray-700 mb-2 text-sm">Recent Activity</h4>
-                        <div className="space-y-2 max-h-32 overflow-y-auto">
-                          {market.bids.slice(0, 5).map((bid, idx) => (
-                            <div key={idx} className="text-sm text-gray-600 bg-gray-50 rounded p-2 flex justify-between items-center">
-                              <div>
-                                <span className="font-semibold">{bid.user_name}</span> bet{' '}
-                                <span className="font-semibold text-purple-600">{bid.amount}</span> on{' '}
-                                <span className={`font-semibold ${bid.position === 'yes' ? 'text-green-600' : 'text-red-600'}`}>
-                                  {bid.position.toUpperCase()}
-                                </span>
-                              </div>
-                              {bid.created_at && (
-                                <span className="text-xs text-gray-400">
-                                  {new Date(bid.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {(() => {
-                      const userBids = market.bids.filter(b => b.user_id === currentUser.id);
-                      if (userBids.length > 0) {
-                        const yesBets = userBids.filter(b => b.position === 'yes').reduce((sum, b) => sum + b.amount, 0);
-                        const noBets = userBids.filter(b => b.position === 'no').reduce((sum, b) => sum + b.amount, 0);
-                        return (
-                          <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                            <h4 className="font-semibold text-purple-900 text-sm mb-1">Your Position</h4>
-                            <div className="flex gap-4 text-sm">
-                              {yesBets > 0 && (
-                                <span className="text-green-700">YES: <span className="font-semibold">{yesBets} coins</span></span>
-                              )}
-                              {noBets > 0 && (
-                                <span className="text-red-700">NO: <span className="font-semibold">{noBets} coins</span></span>
-                              )}
-                              <span className="text-purple-700">Total invested: <span className="font-semibold">{yesBets + noBets}</span></span>
-                            </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })()}
-
-                    {!market.resolved && new Date(market.end_date) <= new Date() && (
-                      <div className="flex gap-3 pt-4 border-t-2">
-                        <button
-                          onClick={() => resolveMarket(market.id, 'yes')}
-                          className="flex-1 bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition-all"
-                        >
-                          Resolve YES
-                        </button>
-                        <button
-                          onClick={() => resolveMarket(market.id, 'no')}
-                          className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-all"
-                        >
-                          Resolve NO
-                        </button>
-                      </div>
+                <div key={market.id} className="glass-card" style={styles.glassCard}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: 'white', flex: 1 }}>{market.question}</h3>
+                    {market.resolved && (
+                      <span style={{ marginLeft: '1rem', padding: '0.375rem 1rem', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%)', color: '#6ee7b7', borderRadius: '9999px', fontSize: '0.875rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                        <Trophy style={{ width: '16px', height: '16px' }} />
+                        Resolved: {market.outcome === 'yes' ? 'YES' : 'NO'}
+                      </span>
                     )}
                   </div>
+                  <p style={{ fontSize: '0.875rem', color: 'rgba(196, 181, 253, 0.7)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Clock style={{ width: '16px', height: '16px' }} />
+                    Ends: {new Date(market.end_date).toLocaleDateString()}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                    {/* YES Card */}
+                    <div style={styles.yesCard}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <span style={{ fontWeight: '700', color: '#6ee7b7', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>YES</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <TrendingUp style={{ width: '20px', height: '20px', color: '#34d399' }} />
+                          <span style={{ fontSize: '1.875rem', fontWeight: '700', color: '#6ee7b7' }}>{yesPrice}%</span>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(52, 211, 153, 0.7)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Activity style={{ width: '12px', height: '12px' }} />
+                        Pool: {Math.round(market.yes_shares)} shares
+                      </div>
+                      {!market.resolved && (
+                        <>
+                          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                            {[10, 25, 50, 100].map(amount => (
+                              <button
+                                key={amount}
+                                onClick={() => placeBid(market.id, 'yes', amount)}
+                                style={styles.betBtnYes}
+                              >
+                                {amount}
+                              </button>
+                            ))}
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                              type="number"
+                              placeholder="Custom"
+                              value={customBets[market.id] || ''}
+                              onChange={(e) => setCustomBets({ ...customBets, [market.id]: e.target.value })}
+                              style={styles.betInput}
+                            />
+                            <button
+                              onClick={() => placeBid(market.id, 'yes', parseInt(customBets[market.id]) || 0)}
+                              style={styles.betSubmitYes}
+                            >
+                              Bet
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* NO Card */}
+                    <div style={styles.noCard}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                        <span style={{ fontWeight: '700', color: '#fda4af', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>NO</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <TrendingDown style={{ width: '20px', height: '20px', color: '#fb7185' }} />
+                          <span style={{ fontSize: '1.875rem', fontWeight: '700', color: '#fda4af' }}>{noPrice}%</span>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(251, 113, 133, 0.7)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Activity style={{ width: '12px', height: '12px' }} />
+                        Pool: {Math.round(market.no_shares)} shares
+                      </div>
+                      {!market.resolved && (
+                        <>
+                          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                            {[10, 25, 50, 100].map(amount => (
+                              <button
+                                key={amount}
+                                onClick={() => placeBid(market.id, 'no', amount)}
+                                style={styles.betBtnNo}
+                              >
+                                {amount}
+                              </button>
+                            ))}
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                              type="number"
+                              placeholder="Custom"
+                              value={customBets[market.id] || ''}
+                              onChange={(e) => setCustomBets({ ...customBets, [market.id]: e.target.value })}
+                              style={styles.betInput}
+                            />
+                            <button
+                              onClick={() => placeBid(market.id, 'no', parseInt(customBets[market.id]) || 0)}
+                              style={styles.betSubmitNo}
+                            >
+                              Bet
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {market.bids.length > 0 && (
+                    <div style={{ marginBottom: '1rem' }}>
+                      <h4 style={{ fontWeight: '600', color: '#d8b4fe', marginBottom: '0.75rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Activity style={{ width: '16px', height: '16px' }} />
+                        Recent Activity
+                      </h4>
+                      <div style={{ maxHeight: '128px', overflowY: 'auto' }}>
+                        {market.bids.slice(0, 5).map((bid, idx) => (
+                          <div key={idx} style={styles.activityItem}>
+                            <div style={{ color: '#e9d5ff', fontSize: '0.875rem' }}>
+                              <span style={{ fontWeight: '600', color: 'white' }}>{bid.user_name}</span> bet{' '}
+                              <span style={{ fontWeight: '600', color: '#fbbf24' }}>{bid.amount}</span> on{' '}
+                              <span style={{ fontWeight: '600', color: bid.position === 'yes' ? '#34d399' : '#fb7185' }}>
+                                {bid.position.toUpperCase()}
+                              </span>
+                            </div>
+                            {bid.created_at && (
+                              <span style={{ fontSize: '0.75rem', color: 'rgba(168, 85, 247, 0.5)' }}>
+                                {new Date(bid.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(() => {
+                    const userBids = market.bids.filter(b => b.user_id === currentUser.id);
+                    if (userBids.length > 0) {
+                      const yesBets = userBids.filter(b => b.position === 'yes').reduce((sum, b) => sum + b.amount, 0);
+                      const noBets = userBids.filter(b => b.position === 'no').reduce((sum, b) => sum + b.amount, 0);
+                      return (
+                        <div style={styles.positionCard}>
+                          <h4 style={{ fontWeight: '600', color: '#e9d5ff', fontSize: '0.875rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Position</h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.875rem' }}>
+                            {yesBets > 0 && (
+                              <span style={{ color: '#6ee7b7', background: 'rgba(16, 185, 129, 0.2)', padding: '0.25rem 0.75rem', borderRadius: '8px' }}>YES: <span style={{ fontWeight: '600' }}>{yesBets} coins</span></span>
+                            )}
+                            {noBets > 0 && (
+                              <span style={{ color: '#fda4af', background: 'rgba(244, 63, 94, 0.2)', padding: '0.25rem 0.75rem', borderRadius: '8px' }}>NO: <span style={{ fontWeight: '600' }}>{noBets} coins</span></span>
+                            )}
+                            <span style={{ color: '#e9d5ff', background: 'rgba(168, 85, 247, 0.2)', padding: '0.25rem 0.75rem', borderRadius: '8px' }}>Total: <span style={{ fontWeight: '600', color: '#fbbf24' }}>{yesBets + noBets}</span></span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+
+                  {!market.resolved && new Date(market.end_date) <= new Date() && (
+                    <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      <button
+                        onClick={() => resolveMarket(market.id, 'yes')}
+                        style={{ ...styles.resolveBtn, background: 'linear-gradient(135deg, #10b981 0%, #22c55e 100%)', boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)' }}
+                      >
+                        Resolve YES
+                      </button>
+                      <button
+                        onClick={() => resolveMarket(market.id, 'no')}
+                        style={{ ...styles.resolveBtn, background: 'linear-gradient(135deg, #f43f5e 0%, #ef4444 100%)', boxShadow: '0 10px 30px rgba(244, 63, 94, 0.3)' }}
+                      >
+                        Resolve NO
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })
